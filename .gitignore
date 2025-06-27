@@ -2,9 +2,6 @@
 # Ignore the main build output directory
 /target/
 
-# Ignore the lock file if this were a library, but for a binary application like a web server,
-# Cargo.lock SHOULD be committed to ensure reproducible builds. So we leave it out of this file.
-
 # Crate registry index
 /cargo-registry/
 
