@@ -1,0 +1,190 @@
+<!-- templates/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles to ensure Inter font is applied across the body */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for the message box/modal */
+        .message-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+        }
+        .message-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100 text-gray-800 p-4 relative">
+
+    <!-- Information Icon Button - Moved outside the form -->
+    <button id="infoButton" class="absolute top-4 right-4 p-2 rounded-full text-blue-500 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition">
+        <i class="fas fa-info-circle fa-lg"></i>
+    </button>
+
+    <form id="loginForm" class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md flex flex-col items-center relative">
+
+        <h1 class="text-4xl font-bold text-blue-600 mb-8">User Login</h1> <!-- Removed mt-4, as button is no longer inside, so no collision -->
+
+        <div class="w-full mb-6">
+            <label for="username" class="block text-gray-700 text-sm font-semibold mb-2">Username:</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                required
+                class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
+                placeholder="Enter your username"
+            >
+        </div>
+
+        <div class="w-full mb-6">
+            <label for="password" class="block text-gray-700 text-sm font-semibold mb-2">Password:</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
+                placeholder="Enter your password"
+            >
+        </div>
+
+        <button
+            type="submit"
+            class="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:shadow-outline transform transition duration-300 ease-in-out hover:scale-105 shadow-md hover:shadow-lg"
+        >
+            Login
+        </button>
+
+        <div id="message" class="mt-6 p-3 w-full text-center rounded-lg text-sm font-medium"></div>
+    </form>
+
+    <!-- Message box container (for status info) -->
+    <div id="statusMessageBox" class="hidden message-modal">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">Application Information</h2>
+        <p id="statusMessage" class="text-gray-700 mb-2"></p>
+        <p id="versionMessage" class="text-gray-700 mb-4"></p>
+        <button id="closeStatusMessageBox" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition">Close</button>
+    </div>
+    <div id="statusMessageBoxOverlay" class="hidden message-modal-overlay"></div>
+
+
+    <!-- Client-side SHA-256 hashing library from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default browser form submission
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Hash the password using SHA-256 on the client-side as per requirement
+            const hashedPassword = sha256(password);
+
+            // Prepare the data payload in JSON format
+            const data = {
+                username: username,
+                password_hash: hashedPassword // Send the hashed password
+            };
+
+            const messageElement = document.getElementById('message');
+            messageElement.textContent = ''; // Clear previous messages
+            messageElement.className = 'mt-6 p-3 w-full text-center rounded-lg text-sm font-medium'; // Reset classes
+
+            try {
+                // Send a POST request to the /login endpoint
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json' // Specify content type as JSON
+                    },
+                    body: JSON.stringify(data) // Convert JavaScript object to JSON string
+                });
+
+                const result = await response.json(); // Parse the JSON response from the server
+
+                if (response.ok) { // Check if the HTTP status code is in the 2xx range (success)
+                    messageElement.classList.add('bg-green-100', 'text-green-800');
+                    messageElement.textContent = `Login successful! Redirecting...`;
+
+                    setTimeout(() => {
+                        window.location.href = '/dashboard'; // Redirect to the dashboard page
+                    }, 1500); // Redirect after 1.5 seconds
+
+                } else { // Handle non-2xx HTTP status codes (e.g., 400, 401, 500)
+                    messageElement.classList.add('bg-red-100', 'text-red-800');
+                    messageElement.textContent = `Login failed: ${result.message || 'Unknown error'}`;
+                }
+            } catch (error) {
+                // Catch any network errors or issues with the fetch operation
+                messageElement.classList.add('bg-red-100', 'text-red-800');
+                messageElement.textContent = `An error occurred: ${error.message}`;
+            }
+        });
+
+        // --- JavaScript for the Info Button and Message Box ---
+        const infoButton = document.getElementById('infoButton');
+        const statusMessageBox = document.getElementById('statusMessageBox');
+        const statusMessageBoxOverlay = document.getElementById('statusMessageBoxOverlay');
+        const closeStatusMessageBox = document.getElementById('closeStatusMessageBox');
+        const statusMessageElement = document.getElementById('statusMessage');
+        const versionMessageElement = document.getElementById('versionMessage');
+
+        infoButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/status'); // Fetch status from backend
+                const data = await response.json();
+
+                statusMessageElement.textContent = `Status: ${data.status} - ${data.message}`;
+                versionMessageElement.textContent = `Version: ${data.version || 'N/A'}`;
+
+                // Show the message box
+                statusMessageBox.classList.remove('hidden');
+                statusMessageBoxOverlay.classList.remove('hidden');
+
+            } catch (error) {
+                statusMessageElement.textContent = `Error fetching status: ${error.message}`;
+                versionMessageElement.textContent = '';
+                statusMessageBox.classList.remove('hidden');
+                statusMessageBoxOverlay.classList.add('hidden'); // Ensure overlay is hidden if error
+            }
+        });
+
+        closeStatusMessageBox.addEventListener('click', () => {
+            statusMessageBox.classList.add('hidden');
+            statusMessageBoxOverlay.classList.add('hidden');
+        });
+
+        statusMessageBoxOverlay.addEventListener('click', () => {
+            statusMessageBox.classList.add('hidden');
+            statusMessageBoxOverlay.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>

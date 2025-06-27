@@ -1,0 +1,20 @@
+# Axum: A web framework for Rust, built on Tokio.
+# (MIT License)
+
+# Tokio: The asynchronous runtime. Axum heavily relies on Tokio for its async operations.
+# (MIT License)
+
+# Serde: A powerful serialization/deserialization framework.
+# (MIT License or Apache License 2.0)
+
+# serde_json: A Serde-compatible JSON data format. Used for parsing and generating JSON.
+# (MIT License or Apache License 2.0)
+
+# sha2: A crate for cryptographic SHA-2 hash functions, including SHA-256.
+# (MIT License or Apache License 2.0)
+
+# askama: A fast, secure, and easy-to-use template engine for Rust.
+# (MIT License or Apache License 2.0)
+
+# tracing & tracing-subscriber: A highly effective logging and diagnostic system for Rust applications.
+# (MIT License)

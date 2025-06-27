@@ -1,0 +1,41 @@
+[package]
+name = "rust-mini-project"  # Name of your application
+version = "0.1.0"           # Current version
+edition = "2024"            # The Rust edition to use
+
+[dependencies]
+# Axum: A web framework for Rust, built on Tokio.
+# Version "0.8.4" is the latest version.
+# The "macros" feature enables useful procedural macros for routing.
+axum = { version = "0.8.4", features = ["macros"] }
+
+# Tokio: The asynchronous runtime. Axum heavily relies on Tokio for its async operations.
+# Version "1.45.1" is the latest.
+# The "full" feature includes all runtime capabilities (e.g., I/O, time, multi-threading).
+tokio = { version = "1.45.1", features = ["full"] }
+
+# Serde: A powerful serialisation/deserialisation framework.
+# Version "1.0.219" is the latest.
+# The "derive" feature allows automatically generating Serde implementations for structs/enums.
+serde = { version = "1.0.219", features = ["derive"] }
+# serde_json: A Serde-compatible JSON data format. Used for parsing and generating JSON.
+# Version "1.0.140" is the latest.
+serde_json = "1.0.140"
+
+# sha2: A crate for cryptographic SHA-2 hash functions, including SHA-256.
+# Latest version "0.11.0-rc.0" is a release candidate. "0.10.11" is the latest stable.
+# Used for client-side password hashing as specified in the requirements.
+sha2 = "0.11.0-rc.0"
+
+# askama: A fast, secure and easy-to-use template engine for Rust perfect for HTML.
+# Latest version "0.13.0-pre.0" is a pre-release version. "0.12.1" is the latest stable.
+# Use `axum-0.8` feature as it is compatible with axum 0.8.x.
+askama = { version = "0.13.0-pre.0" }
+
+# tracing & tracing-subscriber: A highly effective logging and diagnostic system for Rust applications.
+# tracing provides the API for emitting diagnostic information. Version "0.1.41" is the latest.
+tracing = "0.1.41"
+# tracing-subscriber provides utilities to collect and process diagnostic data emitted by `tracing`.
+# Version "0.3.19" is the latest.
+# Need to explicitly enable the "env-filter" feature to use `EnvFilter`.
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
