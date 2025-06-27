@@ -11,7 +11,7 @@ use tracing; // For logging within handlers.
 
 // Askama imports for templating.
 use askama::Template; // The core Askama Template trait and derive macro.
- 
+
 // Import models and user_data functions from their respective modules.
 use crate::models::{ApiResponse, LoginRequest, AuthResponse};
 use crate::user_data; // Import the module so we can use `user_data::load_users`
@@ -42,7 +42,7 @@ pub struct DashboardPage {
 pub async fn show_dashboard_page() -> impl IntoResponse {
     // Get the application version from Cargo.toml at compile time.
     let version = env!("CARGO_PKG_VERSION").to_string();
-    
+
     // Create an instance of the DashboardPage struct, passing the version.
     let dashboard_page = DashboardPage { version };
 

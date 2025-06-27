@@ -17,7 +17,6 @@ pub const USER_DATA_FILE: &str = "users.txt";
 pub struct User {
     pub username: String,
     // This field stores the SHA-256 hash of the password.
-    // REMINDER: For production, use a strong KDF like Argon2 for server-side hashing.
     pub server_hashed_password: String,
 }
 
