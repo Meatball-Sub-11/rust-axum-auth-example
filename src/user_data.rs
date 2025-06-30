@@ -1,8 +1,8 @@
 // src/user_data.rs
 
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use tokio::fs;
-use serde::{Deserialize, Serialize};
 use tracing;
 
 pub const USER_DATA_FILE: &str = "users.txt";
@@ -51,6 +51,9 @@ pub async fn setup_initial_users() -> Result<(), Box<dyn std::error::Error>> {
     ];
     let json_data = serde_json::to_string_pretty(&users)?;
     fs::write(USER_DATA_FILE, json_data).await?;
-    tracing::info!("Initial users created in {} with plain text passwords.", USER_DATA_FILE);
+    tracing::info!(
+        "Initial users created in {} with plain text passwords.",
+        USER_DATA_FILE
+    );
     Ok(())
 }
