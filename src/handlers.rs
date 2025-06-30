@@ -76,6 +76,8 @@ pub async fn login(Json(payload): Json<LoginRequest>) -> (StatusCode, Json<AuthR
     };
 
     if let Some(user) = users.get(&payload.username) {
+        tracing::info!("✅ Using MANUAL SHA-256 implementation to hash password.");
+
         // --- Use the manual SHA-256 implementation ---
         let server_hashed_password = sha2_manual::digest(&user.password);
 
