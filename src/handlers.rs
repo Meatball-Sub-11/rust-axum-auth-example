@@ -1,21 +1,19 @@
 // src/handlers.rs
-// This file contains all the HTTP handler functions for your Axum routes, using Askama for templating.
 
-// Import necessary types from axum.
 use axum::{
-    response::{Html, IntoResponse}, // To send HTML responses.
-    Json, // To handle JSON requests/responses.
-    http::StatusCode, // To set HTTP status codes.
+    response::{Html, IntoResponse},
+    Json,
+    http::StatusCode,
 };
-use tracing; // For logging within handlers.
+use tracing;
+use askama::Template;
+// Import the Sha256 hasher and the Digest trait from the sha2 crate.
+use sha2::{Sha256, Digest};
 
-// Askama imports for templating.
-use askama::Template; // The core Askama Template trait and derive macro.
-
-// Import models and user_data functions from their respective modules.
 use crate::models::{ApiResponse, LoginRequest, AuthResponse};
-use crate::user_data; // Import the module so we can use `user_data::load_users`
+use crate::user_data;
 
+// ... (show_login_page, DashboardPage, show_dashboard_page, and get_status handlers remain unchanged) ...
 // --- Web UI Handlers (using Askama Templates) ---
 
 /// Askama template struct for rendering the login HTML page.
@@ -26,28 +24,28 @@ pub struct LoginPage; // Public so main.rs can use it for direct rendering if ne
 
 /// Handler for the root path ("/"), which displays the login page.
 pub async fn show_login_page() -> impl IntoResponse {
-    // Render the `LoginPage` template. `askama_web` provides the `IntoResponse` implementation for Askama templates.
-    Html(LoginPage.render().unwrap()) // `.unwrap()` is used for simplicity; in production, you would handle the `Result` gracefully (e.g., return a 500 error page).
+// Render the `LoginPage` template. `askama_web` provides the `IntoResponse` implementation for Askama templates.
+Html(LoginPage.render().unwrap()) // `.unwrap()` is used for simplicity; in production, you would handle the `Result` gracefully (e.g., return a 500 error page).
 }
 
 /// Askama template struct for rendering the dashboard HTML page.
 #[derive(Template)]
 #[template(path = "dashboard.html")]
 pub struct DashboardPage {
-    // Add a field to hold the application version.
-    pub version: String,
+// Add a field to hold the application version.
+pub version: String,
 }
 
 /// Handler for the "/dashboard" path, displayed after successful login.
 pub async fn show_dashboard_page() -> impl IntoResponse {
-    // Get the application version from Cargo.toml at compile time.
-    let version = env!("CARGO_PKG_VERSION").to_string();
+// Get the application version from Cargo.toml at compile time.
+let version = env!("CARGO_PKG_VERSION").to_string();
 
-    // Create an instance of the DashboardPage struct, passing the version.
-    let dashboard_page = DashboardPage { version };
+// Create an instance of the DashboardPage struct, passing the version.
+let dashboard_page = DashboardPage { version };
 
-    // Render the `DashboardPage` template.
-    Html(dashboard_page.render().unwrap()) // `.unwrap()` for simplicity; handle errors gracefully in production.
+// Render the `DashboardPage` template.
+Html(dashboard_page.render().unwrap()) // `.unwrap()` for simplicity; handle errors gracefully in production.
 }
 
 // --- REST API Handlers ---
@@ -55,18 +53,17 @@ pub async fn show_dashboard_page() -> impl IntoResponse {
 /// Handles GET requests to the `/status` endpoint.
 /// Returns basic information about the API's status and version in JSON format.
 pub async fn get_status() -> Json<ApiResponse> {
-    Json(ApiResponse {
-        status: "success".to_string(),
-        message: "API is up and running!".to_string(),
-        version: Some(env!("CARGO_PKG_VERSION").to_string()), // Get version from Cargo.toml.
-    })
+Json(ApiResponse {
+status: "success".to_string(),
+message: "API is up and running!".to_string(),
+version: Some(env!("CARGO_PKG_VERSION").to_string()), // Get version from Cargo.toml.
+})
 }
 
-/// Handles POST requests to the `/login` endpoint for user authentication.
-/// It expects a `LoginRequest` JSON payload and returns an `AuthResponse` JSON payload.
-/// Sets HTTP status codes: 200 OK for success, 401 Unauthorized for failure, 500 for server errors.
+
+/// Handles POST requests to the `/login` endpoint.
+/// Now performs SHA-256 hashing on the backend.
 pub async fn login(Json(payload): Json<LoginRequest>) -> (StatusCode, Json<AuthResponse>) {
-    // Attempt to load user data from the file using the `load_users` function from the `user_data` module.
     let users = match user_data::load_users().await {
         Ok(u) => u,
         Err(e) => {
@@ -78,25 +75,36 @@ pub async fn login(Json(payload): Json<LoginRequest>) -> (StatusCode, Json<AuthR
         }
     };
 
-    // Try to find the user by their username in the loaded HashMap.
     if let Some(user) = users.get(&payload.username) {
-        // Compare the provided password hash with the stored hash.
-        if user.server_hashed_password == payload.password_hash {
+        // --- NEW HASHING LOGIC ---
+        // 1. Create a new SHA-256 hasher instance.
+        let mut hasher = Sha256::new();
+        
+        // 2. Feed the plain text password from the user file into the hasher.
+        hasher.update(user.password.as_bytes());
+        
+        // 3. Finalize the hash and get the result.
+        let server_hash_result = hasher.finalize();
+        
+        // 4. Convert the hash result to a lowercase hexadecimal string.
+        let server_hashed_password = format!("{:x}", server_hash_result);
+        // --- END OF NEW LOGIC ---
+
+        // Compare the newly generated hash with the hash from the client.
+        if server_hashed_password == payload.password_hash {
             tracing::info!("Login successful for user: {}", payload.username);
             (StatusCode::OK, Json(AuthResponse {
                 success: true,
                 message: "Login successful!".to_string(),
             }))
         } else {
-            // Log and return Unauthorized if password hash doesn't match.
-            tracing::warn!("Failed login attempt for user: {} (invalid password hash)", payload.username);
+            tracing::warn!("Failed login attempt for user: {} (invalid password)", payload.username);
             (StatusCode::UNAUTHORIZED, Json(AuthResponse {
                 success: false,
                 message: "Invalid username or password.".to_string(),
             }))
         }
     } else {
-        // Log and return Unauthorized if user not found.
         tracing::warn!("Failed login attempt for unknown user: {}", payload.username);
         (StatusCode::UNAUTHORIZED, Json(AuthResponse {
             success: false,

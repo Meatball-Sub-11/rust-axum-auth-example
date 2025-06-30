@@ -25,12 +25,12 @@ serde_json = "1.0.140"
 # sha2: A crate for cryptographic SHA-2 hash functions, including SHA-256.
 # Latest version "0.11.0-rc.0" is a release candidate. "0.10.11" is the latest stable.
 # Used for client-side password hashing as specified in the requirements.
-sha2 = "0.11.0-rc.0"
+sha2 = "0.10.9"
 
 # askama: A fast, secure and easy-to-use template engine for Rust perfect for HTML.
 # Latest version "0.13.0-pre.0" is a pre-release version. "0.12.1" is the latest stable.
 # Use `axum-0.8` feature as it is compatible with axum 0.8.x.
-askama = { version = "0.13.0-pre.0" }
+askama = { version = "0.14.0" }
 
 # tracing & tracing-subscriber: A highly effective logging and diagnostic system for Rust applications.
 # tracing provides the API for emitting diagnostic information. Version "0.1.41" is the latest.
@@ -39,3 +39,5 @@ tracing = "0.1.41"
 # Version "0.3.19" is the latest.
 # Need to explicitly enable the "env-filter" feature to use `EnvFilter`.
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+
+tower-http = { version = "0.6.6", features = ["fs"] }

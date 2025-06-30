@@ -1,1 +1,24 @@
-/target
+# Rust / Cargo
+# Ignore the main build output directory
+/target/
+
+# Crate registry index
+/cargo-registry/
+
+# Application Specific
+users.txt
+
+# Environment variables file
+.env
+
+# Log files
+*.log
+
+# IDE and Editor specific files
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Operating System specific files
+# Windows
+Thumbs.db
