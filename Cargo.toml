@@ -39,3 +39,5 @@ tracing = "0.1.41"
 # Version "0.3.19" is the latest.
 # Need to explicitly enable the "env-filter" feature to use `EnvFilter`.
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+
+tower-http = { version = "0.6.6", features = ["fs"] }
