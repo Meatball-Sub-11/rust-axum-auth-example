@@ -141,7 +141,7 @@ pub fn digest(input: &str) -> String {
     // --- Final Hash ---
     let mut final_hash = String::new();
     for val in h {
-        final_hash.push_str(&format!("{:08x}", val));
+        final_hash.push_str(&format!("{val:08x}"));
     }
     final_hash
 }
