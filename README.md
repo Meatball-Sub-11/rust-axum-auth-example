@@ -1,6 +1,8 @@
 
 # Rust Axum Authentication Example
 
+[![Rust](https://github.com/Meatball-Sub-11/rust-axum-auth-example/actions/workflows/rust.yml/badge.svg)](https://github.com/Meatball-Sub-11/rust-axum-auth-example/actions/workflows/rust.yml)
+
 This project is a simple, self-contained web application built with Rust and the Axum framework. It demonstrates a basic user authentication flow, including user login, password hashing and a protected dashboard page.
 
 ## Features
