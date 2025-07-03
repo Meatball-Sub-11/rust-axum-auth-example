@@ -3,7 +3,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use tokio::fs;
-use tracing;
 
 pub const USER_DATA_FILE: &str = "users.txt";
 
@@ -21,10 +20,10 @@ pub struct User {
 pub async fn load_users() -> Result<HashMap<String, User>, String> {
     let content = fs::read_to_string(USER_DATA_FILE)
         .await
-        .map_err(|e| format!("Failed to read user data file '{}': {}", USER_DATA_FILE, e))?;
+        .map_err(|e| format!("Failed to read user data file '{USER_DATA_FILE}': {e}"))?;
 
     let users: Vec<User> = serde_json::from_str(&content)
-        .map_err(|e| format!("Failed to parse user data from '{}': {}", USER_DATA_FILE, e))?;
+        .map_err(|e| format!("Failed to parse user data from '{USER_DATA_FILE}': {e}"))?;
 
     let mut user_map = HashMap::new();
     for user in users {

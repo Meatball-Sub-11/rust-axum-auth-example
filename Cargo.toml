@@ -1,7 +1,8 @@
 [package]
-name = "rust-mini-project"  # Name of your application
+name = "rust-axum-auth-example"  # Name of your application
 version = "0.1.0"           # Current version
 edition = "2024"            # The Rust edition to use
+license = "MIT"
 
 [dependencies]
 # Axum: A web framework for Rust, built on Tokio.
@@ -41,3 +42,4 @@ tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 
 tower-http = { version = "0.6.6", features = ["fs"] }
+dotenvy = "0.15"
