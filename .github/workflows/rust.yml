@@ -36,6 +36,3 @@ jobs:
 
     - name: Run tests
       run: cargo test --verbose
-
-    - name: Run benchmarks
-      run: cargo bench --verbose
