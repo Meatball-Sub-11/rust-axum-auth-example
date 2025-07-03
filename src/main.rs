@@ -7,20 +7,23 @@ use axum::{
 // 1. Import ServeDir for serving static files
 use tower_http::services::ServeDir;
 
+use dotenvy::dotenv;
+use std::env;
 use tokio::fs;
 use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 mod handlers;
 mod models;
 mod user_data;
-// This might be on a different branch, but including it for completeness
-// mod sha2_manual;
 
 use user_data::{USER_DATA_FILE, setup_initial_users};
 
 #[tokio::main]
 async fn main() {
-    // ... (logging and initial user setup remain the same) ...
+    // NEW: Load the .env file
+    dotenv().ok();
+
+    // --- Logging and initial user setup ---
     tracing_subscriber::registry()
         .with(
             EnvFilter::try_from_default_env()
@@ -39,23 +42,28 @@ async fn main() {
 
     // --- Define Application Routes ---
     let app = Router::new()
-        // API and Page routes
         .route("/", get(handlers::show_login_page))
         .route("/status", get(handlers::get_status))
         .route("/login", post(handlers::login))
         .route("/dashboard", get(handlers::show_dashboard_page))
-        // 2. Add the static file service
-        // This service will serve files from the `public` directory
-        // Use .fallback_service for the static file handler.
-        // This will handle any request that did not match a route above.
         .fallback_service(ServeDir::new("public"));
 
     // --- Start the HTTP Server ---
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
+
+    // NEW: Read the server address from the environment, with a fallback default
+    let server_address = env::var("SERVER_ADDRESS").unwrap_or_else(|_| "0.0.0.0:3000".to_string());
+
+    // UPDATED: Use the server_address variable
+    let listener = tokio::net::TcpListener::bind(&server_address)
         .await
         .expect("Failed to bind listener to address.");
 
-    tracing::info!("🦀 Backend listening on http://localhost:3000 🦀");
+    // NEW: Create a separate, clickable URL for logging
+    // It replaces "0.0.0.0" with "localhost" and adds "http://"
+    let display_url = format!("http://{}", server_address.replace("0.0.0.0", "localhost"));
+
+    // UPDATED: Log the new clickable URL
+    tracing::info!("🦀 Backend listening on {} 🦀", display_url);
 
     axum::serve(listener, app)
         .await
