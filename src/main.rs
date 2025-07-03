@@ -28,7 +28,7 @@ async fn main() {
     tracing_subscriber::registry()
         .with(
             EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "rust_mini_project=info,tower_http=info".into()),
+                .unwrap_or_else(|_| "rust_axum_auth_example=info,tower_http=info".into()),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();
