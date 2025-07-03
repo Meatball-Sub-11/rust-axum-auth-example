@@ -8,16 +8,7 @@ use axum::{
     Json,
     http::StatusCode,
     response::{Html, IntoResponse},
-    response::{Html, IntoResponse},
 };
-use tracing;
-use askama::Template;
-// Import the Sha256 hasher and the Digest trait from the sha2 crate.
-use sha2::{Sha256, Digest};
-
-use crate::models::{ApiResponse, LoginRequest, AuthResponse};
-use crate::user_data;
-
 // ... (show_login_page, DashboardPage, show_dashboard_page, and get_status handlers remain unchanged) ...
 // --- Web UI Handlers (using Askama Templates) ---
 

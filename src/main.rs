@@ -2,7 +2,6 @@
 
 use axum::{
     Router,
-    Router,
     routing::{get, post},
 };
 // 1. Import ServeDir for serving static files
