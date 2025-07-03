@@ -6,7 +6,6 @@ use axum::{
     http::StatusCode,
     response::{Html, IntoResponse},
 };
-use tracing;
 // Import the Sha256 hasher and the Digest trait from the sha2 crate.
 use sha2::{Digest, Sha256};
 
@@ -89,7 +88,7 @@ pub async fn login(Json(payload): Json<LoginRequest>) -> (StatusCode, Json<AuthR
         let server_hash_result = hasher.finalize();
 
         // 4. Convert the hash result to a lowercase hexadecimal string.
-        let server_hashed_password = format!("{:x}", server_hash_result);
+        let server_hashed_password = format!("{server_hash_result:x}");
         // --- END OF NEW LOGIC ---
 
         // Compare the newly generated hash with the hash from the client.
