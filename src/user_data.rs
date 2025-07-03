@@ -1,5 +1,6 @@
 // src/user_data.rs
 
+use crate::error::AppError;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use tokio::fs;
@@ -17,13 +18,20 @@ pub struct User {
 }
 
 /// Asynchronously loads user data from the `USER_DATA_FILE` into a `HashMap`.
-pub async fn load_users() -> Result<HashMap<String, User>, String> {
-    let content = fs::read_to_string(USER_DATA_FILE)
-        .await
-        .map_err(|e| format!("Failed to read user data file '{USER_DATA_FILE}': {e}"))?;
+pub async fn load_users() -> Result<HashMap<String, User>, AppError> {
+    // The '?' operator will now convert std::io::Error into our AppError
+    let content = fs::read_to_string(USER_DATA_FILE).await?;
 
     let users: Vec<User> = serde_json::from_str(&content)
-        .map_err(|e| format!("Failed to parse user data from '{USER_DATA_FILE}': {e}"))?;
+        // We handle this one manually as it's not a type we've converted
+        .map_err(|e| {
+            tracing::error!("Failed to parse user data from '{}': {}", USER_DATA_FILE, e);
+            // We can create a custom error variant for this later if needed
+            AppError::IoError(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Failed to parse user data",
+            ))
+        })?;
 
     let mut user_map = HashMap::new();
     for user in users {
