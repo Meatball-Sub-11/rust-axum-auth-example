@@ -9,6 +9,7 @@ use axum::{
 // Import the Sha256 hasher and the Digest trait from the sha2 crate.
 use sha2::{Digest, Sha256};
 
+use crate::error::AppError;
 use crate::models::{ApiResponse, AuthResponse, LoginRequest};
 use crate::user_data;
 
@@ -22,9 +23,10 @@ use crate::user_data;
 pub struct LoginPage; // Public so main.rs can use it for direct rendering if needed.
 
 /// Handler for the root path ("/"), which displays the login page.
-pub async fn show_login_page() -> impl IntoResponse {
-    // Render the `LoginPage` template. `askama_web` provides the `IntoResponse` implementation for Askama templates.
-    Html(LoginPage.render().unwrap()) // `.unwrap()` is used for simplicity; in production, you would handle the `Result` gracefully (e.g., return a 500 error page).
+pub async fn show_login_page() -> Result<impl IntoResponse, AppError> {
+    // Replace .unwrap() with the '?' operator
+    let html = LoginPage.render()?;
+    Ok(Html(html))
 }
 
 /// Askama template struct for rendering the dashboard HTML page.
@@ -36,15 +38,16 @@ pub struct DashboardPage {
 }
 
 /// Handler for the "/dashboard" path, displayed after successful login.
-pub async fn show_dashboard_page() -> impl IntoResponse {
+pub async fn show_dashboard_page() -> Result<impl IntoResponse, AppError> {
     // Get the application version from Cargo.toml at compile time.
     let version = env!("CARGO_PKG_VERSION").to_string();
 
     // Create an instance of the DashboardPage struct, passing the version.
     let dashboard_page = DashboardPage { version };
 
-    // Render the `DashboardPage` template.
-    Html(dashboard_page.render().unwrap()) // `.unwrap()` for simplicity; handle errors gracefully in production.
+    // Replace .unwrap() here too
+    let html = dashboard_page.render()?;
+    Ok(Html(html))
 }
 
 // --- REST API Handlers ---
@@ -127,4 +130,12 @@ pub async fn login(Json(payload): Json<LoginRequest>) -> (StatusCode, Json<AuthR
             }),
         )
     }
+}
+
+// NEW: A handler specifically for testing the error page.
+pub async fn test_error_handler() -> Result<(), AppError> {
+    // This will always fail, triggering our AppError response.
+    Err(AppError::IoError(std::io::Error::other(
+        "This is a test error",
+    )))
 }
