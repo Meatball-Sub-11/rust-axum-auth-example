@@ -12,6 +12,7 @@ use std::env;
 use tokio::fs;
 use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
+mod error;
 mod handlers;
 mod models;
 mod sha2_manual;
@@ -47,6 +48,8 @@ async fn main() {
         .route("/status", get(handlers::get_status))
         .route("/login", post(handlers::login))
         .route("/dashboard", get(handlers::show_dashboard_page))
+        // NEW: Add the route for testing the error page
+        .route("/test-error", get(handlers::test_error_handler))
         .fallback_service(ServeDir::new("public"));
 
     // --- Start the HTTP Server ---
