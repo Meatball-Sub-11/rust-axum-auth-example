@@ -5,6 +5,33 @@
 
 This project is a simple, self-contained web application built with Rust and the Axum framework. It demonstrates a basic user authentication flow, including user login, password hashing and a protected dashboard page.
 
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><strong>Login Page</strong></td>
+    <td align="center"><strong>Dashboard (Successful Login)</strong></td>
+    <td align="center"><strong>Error Page (500)</strong></td>
+  </tr>
+  <tr>
+    <td>
+      <a href="assets/login-page.png">
+        <img src="assets/login-page.png" alt="Screenshot of the login page" width="100%">
+      </a>
+    </td>
+    <td>
+      <a href="assets/dashboard-page.png">
+        <img src="assets/dashboard-page.png" alt="Screenshot of the dashboard" width="100%">
+      </a>
+    </td>
+    <td>
+      <a href="assets/error-page.png">
+        <img src="assets/error-page.png" alt="Screenshot of the 500 error page" width="100%">
+      </a>
+    </td>
+  </tr>
+</table>
+
 ## Features
 
 - **REST API:** A backend API with endpoints for status (`/status`) and login (`/login`).
