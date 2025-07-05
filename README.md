@@ -71,8 +71,8 @@ This project is a simple, self-contained web application built with Rust and the
 
 ## Branch Information
 
-- **`main` / `v2`:** The primary version of the application. It uses the `sha2` crate for backend password hashing.
-- **`phase3-manual-sha`:** An experimental branch that uses a manual, from-scratch implementation of SHA-256 for hashing. **This is for educational purposes only.**
+- **`main`:** The primary version of the application. It uses the `sha2` crate for backend password hashing.
+- **`V3-Manual-sha256`:** An experimental branch that uses a manual, from-scratch implementation of SHA-256 for hashing. **This is for educational purposes only.**
 
 ## License
 
