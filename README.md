@@ -15,18 +15,18 @@ This project is a simple, self-contained web application built with Rust and the
   </tr>
   <tr>
     <td>
-      <a href="assets/login-page.png">
-        <img src="assets/login-page.png" alt="Screenshot of the login page" width="100%">
+      <a href="docs/assets/login-page.png">
+        <img src="docs/assets/login-page.png" alt="Screenshot of the login page" width="100%">
       </a>
     </td>
     <td>
-      <a href="assets/dashboard-page.png">
-        <img src="assets/dashboard-page.png" alt="Screenshot of the dashboard" width="100%">
+      <a href="docs/assets/dashboard-page.png">
+        <img src="docs/assets/dashboard-page.png" alt="Screenshot of the dashboard" width="100%">
       </a>
     </td>
     <td>
-      <a href="assets/error-page.png">
-        <img src="assets/error-page.png" alt="Screenshot of the 500 error page" width="100%">
+      <a href="docs/assets/error-page.png">
+        <img src="docs/assets/error-page.png" alt="Screenshot of the 500 error page" width="100%">
       </a>
     </td>
   </tr>
@@ -34,7 +34,7 @@ This project is a simple, self-contained web application built with Rust and the
 
 ## Demo
 
-![Live demo of the application showing a failed and successful login.](assets/demo.gif)
+![Live demo of the application showing a failed and successful login.](docs/assets/demo.gif)
 
 ## Features
 
@@ -73,3 +73,9 @@ This project is a simple, self-contained web application built with Rust and the
 
 - **`main` / `v2`:** The primary version of the application. It uses the `sha2` crate for backend password hashing.
 - **`phase3-manual-sha`:** An experimental branch that uses a manual, from-scratch implementation of SHA-256 for hashing. **This is for educational purposes only.**
+
+## License
+
+This project is licensed under the MIT License - see the `LICENSE` file for details.
+
+For a full list of third-party libraries and their licenses, please see the [licenses.txt](docs/licenses.txt) file.
