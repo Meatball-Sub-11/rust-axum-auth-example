@@ -145,3 +145,25 @@ pub fn digest(input: &str) -> String {
     }
     final_hash
 }
+
+// --- Unit Test Module ---
+#[cfg(test)]
+mod tests {
+    // Import the `digest` function from the file above
+    use super::digest;
+
+    #[test]
+    fn test_digest_with_known_value() {
+        // A known input string
+        let input = "hello world";
+
+        // The known, correct SHA-256 hash for "hello world"
+        let expected_hash = "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9";
+
+        // Run our digest function
+        let actual_hash = digest(input);
+
+        // Assert that the actual result matches the expected result
+        assert_eq!(actual_hash, expected_hash);
+    }
+}
