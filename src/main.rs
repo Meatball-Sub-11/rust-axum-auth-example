@@ -15,6 +15,7 @@ use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitEx
 mod error;
 mod handlers;
 mod models;
+mod sha2_manual;
 mod user_data;
 
 use user_data::{USER_DATA_FILE, setup_initial_users};

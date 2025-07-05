@@ -1,17 +1,16 @@
 // src/handlers.rs
 
+use crate::models::{ApiResponse, AuthResponse, LoginRequest};
+use crate::sha2_manual;
+use crate::user_data;
 use askama::Template;
 use axum::{
     Json,
     http::StatusCode,
     response::{Html, IntoResponse},
 };
-// Import the Sha256 hasher and the Digest trait from the sha2 crate.
-use sha2::{Digest, Sha256};
 
 use crate::error::AppError;
-use crate::models::{ApiResponse, AuthResponse, LoginRequest};
-use crate::user_data;
 
 // ... (show_login_page, DashboardPage, show_dashboard_page, and get_status handlers remain unchanged) ...
 // --- Web UI Handlers (using Askama Templates) ---
@@ -80,19 +79,10 @@ pub async fn login(Json(payload): Json<LoginRequest>) -> (StatusCode, Json<AuthR
     };
 
     if let Some(user) = users.get(&payload.username) {
-        // --- NEW HASHING LOGIC ---
-        // 1. Create a new SHA-256 hasher instance.
-        let mut hasher = Sha256::new();
+        tracing::info!("✅ Using MANUAL SHA-256 implementation to hash password.");
 
-        // 2. Feed the plain text password from the user file into the hasher.
-        hasher.update(user.password.as_bytes());
-
-        // 3. Finalize the hash and get the result.
-        let server_hash_result = hasher.finalize();
-
-        // 4. Convert the hash result to a lowercase hexadecimal string.
-        let server_hashed_password = format!("{server_hash_result:x}");
-        // --- END OF NEW LOGIC ---
+        // --- Use the manual SHA-256 implementation ---
+        let server_hashed_password = sha2_manual::digest(&user.password);
 
         // Compare the newly generated hash with the hash from the client.
         if server_hashed_password == payload.password_hash {
