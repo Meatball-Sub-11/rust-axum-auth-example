@@ -1,27 +1,29 @@
 // src/models.rs
 // This file defines the data structures used for API requests and responses.
 
-use serde::{Deserialize, Serialize}; // Import Serde traits for JSON (de)serialization.
+use serde::{Deserialize, Serialize};
 
-/// Represents the response structure for the `/status` GET endpoint.
+/// Represents the JSON response structure for the `/status` GET endpoint.
 #[derive(Serialize)]
 pub struct ApiResponse {
     pub status: String,
     pub message: String,
-    #[serde(skip_serializing_if = "Option::is_none")] // Omit `version` if it's None in JSON.
+    // This attribute ensures that if `version` is `None`, it won't be included
+    // in the serialized JSON, keeping the output clean.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub version: Option<String>,
 }
 
-/// Represents the expected request body for the `/login` POST endpoint.
-/// The frontend sends the SHA-256 hashed password.
-#[derive(Deserialize)] // Allows deserializing JSON into this struct.
+/// Represents the JSON request body for the `/login` POST endpoint.
+#[derive(Deserialize)]
 pub struct LoginRequest {
     pub username: String,
-    pub password_hash: String, // Expecting SHA-256 hashed password from client.
+    // The client is expected to send the password pre-hashed with SHA-256.
+    pub password_hash: String,
 }
 
-/// Represents the response body for the `/login` POST endpoint.
-#[derive(Serialize)] // Allows serializing this struct into JSON.
+/// Represents the JSON response body for the `/login` POST endpoint.
+#[derive(Serialize)]
 pub struct AuthResponse {
     pub success: bool,
     pub message: String,
